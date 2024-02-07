@@ -6,18 +6,19 @@ compiler := "clang++"
 sources := "src/*.cpp"
 flags := "-Wall -g"
 dir := "build"
-target := "main"
+target := "fuzz"
 
 
 # Build program
 build:
-    {{compiler}} {{flags}} {{sources}} -o {{dir}}/{{target}}
+    @mkdir -p {{dir}}/target
+    {{compiler}} {{flags}} {{sources}} -o {{dir}}/target/{{target}}
 
 # Run Program
-run: build && clean
-    @./{{dir}}/{{target}}
+run: build
+    @./{{dir}}/target/{{target}}
 
 
 # Clean output
 clean:
-    @rm -rf {{target}}
+    @rm -rf {{dir}}/target/*
