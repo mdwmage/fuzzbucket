@@ -1,4 +1,6 @@
 #include <iostream>
+
+#include "package.hpp"
 using namespace std;
 
 const char VERSION[] = "0.0.1";
@@ -27,7 +29,9 @@ void checkArgs(int argc, string args[]) {
          << "- init: create new Fuzzbucket project" << endl
          << "- list: lists packages installed" << endl
          << "- version: shows fuzzbucket version" << endl;
+    exit(0);
   } else if (args[1].compare("version") == 0) {
     cout << "Version: " << VERSION << endl;
+    exit(0);
   }
 }
