@@ -6,54 +6,65 @@
 #define FUZZBUCKET_LOGGER_H
 
 #include <vector>
-
-#include "fstream"
 #include "iostream"
+#include "fstream"
 
 using namespace std;
 
 namespace UI {
 
-class Transport {
- public:
-  virtual void send(const char* message) {
-    throw "Cannot log to empty Transport";
-  };
-};
+    class Transport {
+    public:
+        virtual void send(const char* message) {
+            throw "Cannot log to empty Transport";
+        };
+    };
 
-class Console : public Transport {
- public:
-  void send(const char* message) override { printf("%s\n", message); };
-};
+    class Console : public Transport {
+    public:
+        void send(const char* message) override {
+            printf("%s\n", message);
+        };
+    };
 
-class File : public Transport {
-  ofstream target;
+    class File : public Transport {
+        ofstream target;
+    public:
+        File(const char* target) {
+            this-> target.open(target);
+        }
+        void send(const char* message) override {
+            target << message << endl;
+        };
+        void close() {
+            target.close();
+        }
+    };
 
- public:
-  File(const char* target) { this->target.open(target); }
-  void send(const char* message) override { target << message << endl; };
-  void close() { target.close(); }
-};
+    class Logger {
+        vector<UI::Transport*> Targets;
+        void send(const string& message, const string& type) {
+            for (auto & target : Targets) {
+                target->send((type + "    " +  message).c_str());
+            }
+        }
+    public:
+        void addTransport(UI::Transport* target) {
+            Targets.push_back(target);
+        }
+        explicit Logger(Transport* targets[]) {
+            for (int i = 0; i < sizeof(targets); i++) {
+                addTransport(targets[i]);
+            }
+        }
+        void info(const char* message) {
+            send(message, "INFO");
+        }
+        void warn(const char* message) {
+            send(message, "WARN");
+        }
+    };
 
-class Logger {
-  vector<UI::Transport*> Targets;
-  void send(const string& message, const string& type) {
-    for (auto& target : Targets) {
-      target->send((type + "    " + message).c_str());
-    }
-  }
+} // log
 
- public:
-  void addTransport(UI::Transport* target) { Targets.push_back(target); }
-  explicit Logger(Transport* targets[]) {
-    for (int i = 0; i < sizeof(targets); i++) {
-      addTransport(targets[i]);
-    }
-  }
-  void info(const char* message) { send(message, "INFO"); }
-  void warn(const char* message) { send(message, "WARN"); }
-};
-
-}  // namespace UI
-
-#endif  // FUZZBUCKET_LOGGER_H
+#endif //FUZZBUCKET_LOGGER_H
