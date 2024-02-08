@@ -1,9 +1,17 @@
 #include "package.hpp"
 
+#include <curl/curl.h>
+
 #include <string>
+
 using namespace std;
 
-// Functions
+/********************
+ * Related Functions
+ *******************/
+
+// Converts version enum to string
+// Used for printing version to console.
 string versionToString(version ver) {
   string s = "";
   switch (ver) {
@@ -58,6 +66,7 @@ Package::Package(string src, version ver, string lok) {
 }
 
 // Deconstructor
+// Empty for now.
 Package::~Package() {}
 
 // Getters
@@ -73,6 +82,8 @@ void Package::setLock(string lok) { lock = lok; }
 void Package::setIsLocked(bool lok) { isLocked = lok; }
 
 // Methods
+
+// Converts class to printable string.
 string Package::toString() {
   string s = "latest";
   switch (lockType) {
